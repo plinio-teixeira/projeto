@@ -186,6 +186,172 @@ const $=id=>document.getElementById(id);
 function hist(){try{return JSON.parse(localStorage.getItem(storageKey()))||{attempts:0,weak:{},recent:[],topics:{}}}catch(e){return {attempts:0,weak:{},recent:[],topics:{}}}}
 function store(h){try{localStorage.setItem(storageKey(),JSON.stringify(h))}catch(e){}}
 function activeBanks(){return activeSubject==="ti"?{base:TI_BANK,situations:TI_SITUATIONS,advanced:TI_ADVANCED}:{base:ACCOUNTING_BANK,situations:ACCOUNTING_SITUATIONS,advanced:[]}}
+
+const NEAR_MISS = {
+  ti: [
+    {k:["organização de computadores","memória ram"],v:[
+      "A RAM executa as instruções, enquanto a CPU mantém temporariamente os programas em uso",
+      "A CPU é uma memória não volátil destinada a guardar arquivos após o desligamento",
+      "Um dispositivo de saída envia comandos do usuário para processamento"
+    ]},
+    {k:["sistemas operacionais","abstração"],v:[
+      "O sistema operacional apenas fornece a interface visual, sem administrar processador ou memória",
+      "Cada aplicação deve controlar diretamente o hardware para poder utilizar periféricos",
+      "O sistema operacional é responsável apenas por armazenar arquivos permanentemente"
+    ]},
+    {k:["fundamentos de redes"],v:[
+      "A divisão em camadas elimina a necessidade de protocolos compartilhados",
+      "Cada camada precisa conhecer todos os detalhes internos das demais para transmitir dados",
+      "A finalidade principal das camadas é impedir que equipamentos de fabricantes diferentes se comuniquem"
+    ]},
+    {k:["camada de enlace"],v:[
+      "A camada de enlace garante, sozinha, a entrega fim a fim de todos os dados até a aplicação de destino",
+      "A camada de enlace é responsável por atribuir endereços IP automaticamente aos hosts",
+      "A detecção de erros no enlace significa que qualquer quadro corrompido será sempre corrigido e retransmitido"
+    ]},
+    {k:["roteamento e vlan","situação: vlan","situação: rota estática","vlan"],v:[
+      "Uma VLAN cria obrigatoriamente uma rede física independente, exigindo switches exclusivos",
+      "No roteamento estático, os roteadores aprendem automaticamente as rotas por atualizações dos vizinhos",
+      "No roteamento dinâmico, cada caminho precisa ser digitado manualmente pelo administrador"
+    ]},
+    {k:["dns, dhcp e http","situação: dns","situação: dhcp","dns","dhcp","http"],v:[
+      "DNS distribui automaticamente endereços IP e gateways aos computadores",
+      "DHCP converte nomes de domínio em endereços IP consultando registros de nomes",
+      "HTTP é o serviço que entrega máscara de rede e gateway padrão aos hosts"
+    ]},
+    {k:["tcp e udp","situação: tcp ou udp","tcp","udp"],v:[
+      "UDP estabelece uma conexão e retransmite automaticamente segmentos perdidos para garantir a ordem",
+      "TCP é sem conexão e não mantém mecanismos próprios de confirmação ou retransmissão",
+      "A principal função do UDP é resolver nomes de domínio antes do envio dos dados"
+    ]},
+    {k:["linux: navegação","situação: linux — diretório"],v:[
+      "ls altera o diretório de trabalho para o caminho informado",
+      "cd exibe o caminho completo do diretório atual sem alterá-lo",
+      "pwd lista os arquivos e subdiretórios do local atual"
+    ]},
+    {k:["linux: localizar arquivos","situação: linux — localizar","find"],v:[
+      "find copia o arquivo encontrado para o diretório atual",
+      "find altera o nome dos arquivos que correspondem ao critério informado",
+      "find mostra exclusivamente o diretório de trabalho atual"
+    ]},
+    {k:["linux: arquivos","situação: cópia de arquivo"],v:[
+      "cp move o arquivo e remove obrigatoriamente a origem após a cópia",
+      "mv cria uma cópia mantendo sempre o arquivo original no local de origem",
+      "rm renomeia arquivos sem removê-los"
+    ]},
+    {k:["linux: configuração de rede","situação: linux — interface","ping","traceroute","ip a","route"],v:[
+      "ping exibe a tabela de roteamento e permite inserir rotas persistentes",
+      "traceroute configura endereços IP e máscaras diretamente na interface",
+      "ip a é utilizado principalmente para resolver nomes de domínio"
+    ]},
+    {k:["virtualização: benefícios","situação: virtualização"],v:[
+      "A virtualização elimina a necessidade de manutenção, backup e administração dos servidores",
+      "A consolidação exige que cada máquina virtual tenha um servidor físico exclusivo",
+      "A virtualização garante disponibilidade total mesmo quando o hardware falha"
+    ]},
+    {k:["computação em nuvem","situação: nuvem"],v:[
+      "IaaS entrega exclusivamente uma aplicação pronta, sem permitir gestão do sistema operacional",
+      "PaaS exige que o cliente administre toda a infraestrutura física do datacenter",
+      "SaaS é o modelo em que o cliente recebe apenas máquinas virtuais vazias para configurar"
+    ]},
+    {k:["hypervisors","situação: hypervisor"],v:[
+      "O Tipo 1 é instalado sobre um sistema operacional hospedeiro; o Tipo 2 executa diretamente no hardware",
+      "Ambos os tipos exigem que cada máquina virtual possua processador físico exclusivo",
+      "O Tipo 2 é um protocolo de rede que distribui recursos entre VLANs"
+    ]},
+    {k:["segurança de redes","situação: segurança","situação: integridade","confidencialidade","integridade","autenticação","disponibilidade"],v:[
+      "Confidencialidade significa garantir que os dados não sejam modificados, mesmo que todos possam lê-los",
+      "Integridade significa manter o sistema acessível, ainda que usuários não autorizados possam consultá-lo",
+      "Disponibilidade significa confirmar a identidade de todo usuário antes do acesso"
+    ]},
+    {k:["criptografia","situação: criptografia"],v:[
+      "A criptografia simétrica utiliza obrigatoriamente um par de chaves pública e privada diferentes",
+      "Na criptografia assimétrica, a chave privada pode ser divulgada e a pública deve permanecer secreta",
+      "A criptografia de chave pública utiliza uma única senha secreta compartilhada entre todos os participantes"
+    ]},
+    {k:["algoritmos de roteamento","situação: roteamento","situação: estado do enlace","vetor de distância","estado do enlace"],v:[
+      "Vetor de distância dissemina o mapa completo da topologia de todos os enlaces como característica central",
+      "Estado do enlace aprende caminhos apenas pela distância anunciada por cada vizinho, sem informações topológicas",
+      "Ambos os algoritmos escolhem rotas sem utilizar métricas ou informações de alcançabilidade"
+    ]},
+    {k:["domínios de virtualização","situação: desktops virtuais"],v:[
+      "Virtualização de armazenamento é a mesma coisa que virtualização de desktops, pois ambas entregam uma interface de usuário",
+      "Virtualização de rede significa apenas instalar um sistema operacional convidado em uma máquina virtual",
+      "Virtualização de aplicações exige obrigatoriamente virtualizar o hardware físico de cada servidor"
+    ]}
+  ],
+  cont: [
+    {k:["patrimônio","ativo","passivo","equação patrimonial","patrimônio líquido"],v:[
+      "Patrimônio corresponde somente aos bens físicos, sem incluir direitos ou obrigações",
+      "Passivo representa os recursos controlados pela entidade, enquanto ativo representa suas dívidas",
+      "Patrimônio líquido corresponde à soma do ativo com o passivo exigível"
+    ]},
+    {k:["balanço patrimonial"],v:[
+      "A DRE apresenta a posição patrimonial em uma data específica, enquanto o Balanço apura o lucro do período",
+      "O Balanço Patrimonial demonstra somente entradas e saídas de caixa ocorridas durante o exercício",
+      "O Balanço Patrimonial registra apenas receitas e despesas, sem apresentar obrigações"
+    ]},
+    {k:["dre","resultado"],v:[
+      "A DRE demonstra exclusivamente os saldos de caixa e bancos na data de encerramento",
+      "A DRE apresenta os bens, direitos e obrigações, sem apurar o resultado do período",
+      "A DRE reconhece receitas apenas quando o cliente efetua o pagamento, independentemente do regime adotado"
+    ]},
+    {k:["débito e crédito","natureza das contas"],v:[
+      "Todo débito representa aumento de ativo e todo crédito representa aumento de passivo, sem exceções de contexto",
+      "O método das partidas dobradas exige que cada lançamento tenha apenas um débito e um crédito de igual natureza",
+      "A igualdade entre débitos e créditos garante, por si só, que as contas escolhidas estão corretas"
+    ]},
+    {k:["receita","despesa","competência e caixa","despesa incorrida"],v:[
+      "No regime de competência, receitas e despesas são reconhecidas somente quando o dinheiro entra ou sai do caixa",
+      "No regime de caixa, uma venda a prazo é sempre reconhecida como recebimento na data da emissão da nota",
+      "Uma despesa incorrida e ainda não paga deve ser transferida para o período do pagamento"
+    ]},
+    {k:["estoque","cmv","compra à vista","venda a prazo"],v:[
+      "Toda compra de mercadoria para revenda é reconhecida imediatamente como despesa, ainda que permaneça em estoque",
+      "O CMV corresponde ao valor recebido do cliente, e não ao custo das mercadorias vendidas",
+      "A venda de mercadorias não exige baixa do estoque quando a receita é reconhecida"
+    ]},
+    {k:["depreciação"],v:[
+      "Depreciação é a atualização do ativo obrigatoriamente pelo preço de mercado a cada exercício",
+      "A depreciação reconhece integralmente o custo do bem como despesa no momento da compra, em qualquer situação",
+      "A depreciação representa o pagamento parcelado de um bem adquirido"
+    ]},
+    {k:["balancete","erro de escrituração"],v:[
+      "Um balancete com débitos iguais a créditos comprova que não existem erros de classificação ou omissão",
+      "O balancete substitui a elaboração do Balanço Patrimonial e da DRE",
+      "O balancete apresenta somente contas de resultado e não pode incluir contas patrimoniais"
+    ]},
+    {k:["contas patrimoniais","contas de resultado","escrituração","razão","conciliação","classificação"],v:[
+      "Contas patrimoniais são encerradas integralmente no resultado a cada lançamento diário",
+      "O Livro Razão registra os fatos exclusivamente em ordem cronológica geral, sem separar por conta",
+      "A conciliação bancária consiste em alterar o extrato para que fique igual ao saldo contábil"
+    ]},
+    {k:["capital","empréstimo","liquidez","capital de giro","custo e despesa","provisão","aporte"],v:[
+      "A integralização de capital pelos sócios é reconhecida como receita de vendas da atividade",
+      "O recebimento de empréstimo aumenta o patrimônio líquido sem gerar obrigação de pagamento",
+      "Liquidez corrente é calculada dividindo o passivo circulante pelo ativo circulante"
+    ]}
+  ]
+};
+function applyNearMiss(q){
+ const catalog=NEAR_MISS[activeSubject]||[];
+ const text=(q.t+" "+q.q).toLowerCase();
+ let group=catalog.find(g=>g.k.some(k=>text.includes(k.toLowerCase())));
+ if(!group)return q;
+ const correct=q.o[q.a];
+ const wrongPool=[...group.v,...q.o.filter((_,i)=>i!==q.a)]
+   .filter((v,i,a)=>v!==correct&&a.indexOf(v)===i);
+ const picked=[];
+ while(picked.length<3&&wrongPool.length){
+   const ix=Math.floor(Math.random()*wrongPool.length);
+   picked.push(wrongPool.splice(ix,1)[0]);
+ }
+ if(picked.length<3)return q;
+ const options=[correct,...picked].sort(()=>Math.random()-.5);
+ q.o=options;q.a=options.indexOf(correct);
+ return q;
+}
+
 function pick(){
  let h=hist(),recent=new Set(h.recent||[]),out=[],counts={},banks=activeBanks();
  function sample(bank,prefix,amount,points,kind){
@@ -206,13 +372,13 @@ function pick(){
   sample(banks.base,"C",30,.2,"N");
   sample(banks.situations,"CS",10,.4,"S");
  }
- return out.sort(()=>Math.random()-.5);
+ out.forEach(applyNearMiss);return out.sort(()=>Math.random()-.5);
 }
 function draw(){let root=$('quiz');root.innerHTML='';qs.forEach((q,i)=>{let s=document.createElement('section');s.className='q';s.innerHTML=`<div class="top"><b>Questão ${i+1}</b><span class="tag">${q.kind==='S'?'SITUAÇÃO':q.kind==='D'?'AVANÇADA / PEGADINHA':'CONCEITO'} · ${q.pts.toFixed(2).replace('.',',')} ponto</span></div><div class="tag">${q.t}</div><p>${q.q}</p>`;q.o.forEach((v,j)=>{let l=document.createElement('label');l.className='opt';l.innerHTML=`<input type="radio" name="q${i}" value="${j}" ${ans[i]===j?'checked':''} ${done?'disabled':''}><span><b>${'ABCD'[j]}.</b> ${v}</span>`;l.querySelector('input').onchange=e=>{ans[i]=+e.target.value;stats()};s.appendChild(l)});if(done){let ok=ans[i]===q.a;s.style.borderColor=ok?'var(--ok)':'var(--bad)';let f=document.createElement('div');f.className='fb';f.innerHTML=`<div class="${ok?'ok':'bad'}">${ok?'Correto':ans[i]===undefined?'Em branco':'Incorreto'} — Gabarito: ${'ABCD'[q.a]}. ${q.o[q.a]}</div><p>${q.e}</p>${ans[i]!==undefined&&!ok?`<p class="muted">Sua resposta: ${'ABCD'[ans[i]]}. ${q.o[ans[i]]}</p>`:''}`;s.appendChild(f)}root.appendChild(s)})}
-function stats(){$('answered').textContent=Object.keys(ans).length+'/30';$('progress').style.width=(Object.keys(ans).length/30*100)+'%'}
+function stats(){$('answered').textContent=Object.keys(ans).length+'/40';$('progress').style.width=(Object.keys(ans).length/40*100)+'%'}
 function fmt(n){return [Math.floor(n/3600),Math.floor(n%3600/60),n%60].map(x=>String(x).padStart(2,'0')).join(':')}
 function tick(){if(done)return;left--; $('timer').textContent=fmt(Math.max(0,left));if(left<=0)finish(true)}
-function finish(auto=false){if(done)return;if(!auto&&!confirm('Finalizar e mostrar o gabarito?'))return;done=true;clearInterval(timer);let sc=qs.reduce((s,q,i)=>s+(ans[i]===q.a?q.pts:0),0),hits=qs.filter((q,i)=>ans[i]===q.a).length,h=hist();h.attempts++;h.last=+sc.toFixed(2);h.recent=[...(h.recent||[]),...qs.map(q=>q.id)].slice(-Math.floor((BANK.length+SITUATIONS.length)*.65));qs.forEach((q,i)=>{h.topics[q.t]??={seen:0,wrong:0};h.topics[q.t].seen++;if(ans[i]!==q.a){h.topics[q.t].wrong++;h.weak[q.t]=Math.min(8,(h.weak[q.t]||0)+1)}else h.weak[q.t]=Math.max(0,(h.weak[q.t]||0)-.45)});store(h);$('score').textContent=sc.toFixed(1).replace('.',',')+'/10';$('results').classList.remove('hidden');$('results').innerHTML=`<h2>Resultado: ${sc.toFixed(1).replace('.',',')} / 10,0</h2><p class="${sc>=5?'ok':'bad'}">${sc>=5?'Você atingiu a nota mínima de 5,0.':'Você ficou abaixo da nota mínima de 5,0.'}</p><p>Acertos: ${hits}/40 · Respondidas: ${Object.keys(ans).length}/40 · Tempo utilizado: ${fmt(7200-left)}${auto?' · Tempo esgotado.':''}</p><h3>Desempenho por assunto</h3>${Object.entries(qs.reduce((a,q,i)=>{a[q.t]??={n:0,c:0};a[q.t].n++;if(ans[i]===q.a)a[q.t].c++;return a},{})).map(([t,v])=>`<div class="row"><span>${t}</span><b>${v.c}/${v.n}</b></div>`).join('')}<p class="muted">As respostas incorretas e em branco estão destacadas após este quadro, com gabarito e explicação.</p>`;$('mainActions').classList.add('hidden');$('resultActions').classList.remove('hidden');draw();showHist();scrollTo({top:0,behavior:'smooth'})}
+function finish(auto=false){if(done)return;if(!auto&&!confirm('Finalizar e mostrar o gabarito?'))return;done=true;clearInterval(timer);let sc=qs.reduce((s,q,i)=>s+(ans[i]===q.a?q.pts:0),0),hits=qs.filter((q,i)=>ans[i]===q.a).length,h=hist();h.attempts++;h.last=+sc.toFixed(2);const activePool=activeBanks();const poolSize=activePool.base.length+activePool.situations.length+activePool.advanced.length;h.recent=[...(h.recent||[]),...qs.map(q=>q.id)].slice(-Math.floor(poolSize*.65));qs.forEach((q,i)=>{h.topics[q.t]??={seen:0,wrong:0};h.topics[q.t].seen++;if(ans[i]!==q.a){h.topics[q.t].wrong++;h.weak[q.t]=Math.min(8,(h.weak[q.t]||0)+1)}else h.weak[q.t]=Math.max(0,(h.weak[q.t]||0)-.45)});try{store(h)}catch(storageError){console.warn('Histórico não pôde ser salvo:',storageError)}$('score').textContent=sc.toFixed(1).replace('.',',')+'/10';$('results').classList.remove('hidden');$('results').innerHTML=`<h2>Resultado: ${sc.toFixed(1).replace('.',',')} / 10,0</h2><p class="${sc>=5?'ok':'bad'}">${sc>=5?'Você atingiu a nota mínima de 5,0.':'Você ficou abaixo da nota mínima de 5,0.'}</p><p>Acertos: ${hits}/40 · Respondidas: ${Object.keys(ans).length}/40 · Tempo utilizado: ${fmt(7200-left)}${auto?' · Tempo esgotado.':''}</p><h3>Desempenho por assunto</h3>${Object.entries(qs.reduce((a,q,i)=>{a[q.t]??={n:0,c:0};a[q.t].n++;if(ans[i]===q.a)a[q.t].c++;return a},{})).map(([t,v])=>`<div class="row"><span>${t}</span><b>${v.c}/${v.n}</b></div>`).join('')}<p class="muted">As respostas incorretas e em branco estão destacadas após este quadro, com gabarito e explicação.</p>`;$('mainActions').classList.add('hidden');$('resultActions').classList.remove('hidden');draw();showHist();scrollTo({top:0,behavior:'smooth'})}
 function showHist(){let h=hist(),el=$('history');if(!h.attempts){el.classList.add('hidden');return}el.classList.remove('hidden');el.innerHTML=`<h2>Seu histórico de estudo</h2><p>${h.attempts} tentativa(s) finalizada(s) · última nota: ${Number(h.last||0).toFixed(1).replace('.',',')}/10</p><p class="muted">Assuntos com maior taxa de erro recebem mais peso nos próximos sorteios.</p>`+Object.entries(h.topics||{}).map(([t,v])=>({t,v,p:v.seen?v.wrong/v.seen:0})).sort((a,b)=>b.p-a.p).map(z=>`<div class="row"><span>${z.t}<br><small class="muted">${z.v.wrong} erro(s) em ${z.v.seen} questão(ões)</small></span><b>${Math.round(z.p*100)}%</b></div>`).join('')}
 
 function changeSubject(){
